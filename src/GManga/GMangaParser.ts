@@ -9,7 +9,7 @@ import {
 } from 'paperback-extensions-common'
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-import CryptoJS = require('./external/crypto.min.js')
+import CryptoJS = require('./external/crypto-js.min.js')
 
 export class Parser {
 
