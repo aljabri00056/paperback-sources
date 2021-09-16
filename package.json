@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/Paperback-iOS/extensions-official#readme",
   "devDependencies": {
+    "@types/lodash": "^4.14.172",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",
     "eslint": "^7.27.0",

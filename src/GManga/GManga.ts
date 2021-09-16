@@ -2,17 +2,13 @@ import {
     Chapter,
     ChapterDetails,
     ContentRating,
-    HomeSection,
     Manga,
-    MangaUpdates,
     PagedResults,
     SearchRequest,
     Source,
     SourceInfo,
     LanguageCode,
     TagType,
-    Request,
-    RequestManager
 } from 'paperback-extensions-common'
 
 import { Parser } from './GMangaParser'
@@ -71,11 +67,39 @@ export class GManga extends Source {
     }
 
     async getChapters(mangaId: string): Promise<Chapter[]> {
-        throw new Error('Method not implemented.')
+
+        const pageRequest = createRequestObject({
+            url: `${this.GMANGA_BaseUrl}/api/mangas/${mangaId}/releases`,
+            method: 'GET'
+        })
+
+        const response = await this.requestManager.schedule(pageRequest, 1)
+        const data = JSON.parse(response.data)
+
+        return this.parser.parseChapters(mangaId, data)
+
     }
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-        throw new Error('Method not implemented.')
+
+        const pageRequest = createRequestObject({
+            url: `${this.GMANGA_BaseUrl}/mangas/${chapterId}`,
+            method: 'GET'
+        })
+
+        const response = await this.requestManager.schedule(pageRequest, 1)
+
+        let $ = this.cheerio.load(response.data)
+
+        const pages: string[] = this.parser.parseChapterDetails($)
+
+        return createChapterDetails({
+            id: chapterId,
+            mangaId: mangaId,
+            pages: pages,
+            longStrip: false
+        })
+
     }
 
     async getSearchResults(query: SearchRequest, _metadata: any): Promise<PagedResults> {
