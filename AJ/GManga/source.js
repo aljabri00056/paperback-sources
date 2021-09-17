@@ -17666,7 +17666,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 url: `${this.GMANGA_BaseUrl}/mangas/${chapterId}`,
                 method: 'GET'
             });
-            console.log(`getChapterDetails: ${mangaId}-${chapterId}`);
+            console.log(`getChapterDetails: ${mangaId} - ${chapterId}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             let $ = this.cheerio.load(response.data);
             const pages = this.parser.parseChapterDetails($);
@@ -17789,7 +17789,7 @@ class Parser {
             const team = data.teams.find((t) => t.id === chapter.team_id);
             const chapterization = data.chapterizations.find((c) => c.id === chapter.chapterization_id);
             chapters.push(createChapter({
-                id: [mangaId, 'manga-slug', chapterization.chapter, team.name].join('/'),
+                id: encodeURIComponent([mangaId, 'manga-slug', chapterization.chapter, team.name].join('/')),
                 mangaId: mangaId,
                 volume: Number.isNaN(chapterization.volume) ? 0 : chapterization.volume,
                 chapNum: Number(chapterization.chapter),
