@@ -17642,6 +17642,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 url: `${this.GMANGA_BaseUrl}/api/mangas/${mangaId}`,
                 method: 'GET'
             });
+            console.log(`getMangaDetails: ${mangaId}`);
             const response = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(response.data);
             return this.parser.parseMangaDetails(mangaId, data);
@@ -17653,6 +17654,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 url: `${this.GMANGA_BaseUrl}/api/mangas/${mangaId}/releases`,
                 method: 'GET'
             });
+            console.log(`getChapters: ${mangaId}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             const data = JSON.parse(response.data);
             return this.parser.parseChapters(mangaId, data);
@@ -17664,9 +17666,11 @@ class GManga extends paperback_extensions_common_1.Source {
                 url: `${this.GMANGA_BaseUrl}/mangas/${chapterId}`,
                 method: 'GET'
             });
+            console.log(`getChapterDetails: ${mangaId}-${chapterId}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             let $ = this.cheerio.load(response.data);
             const pages = this.parser.parseChapterDetails($);
+            console.log(...pages);
             return createChapterDetails({
                 id: chapterId,
                 mangaId: mangaId,
@@ -17687,8 +17691,10 @@ class GManga extends paperback_extensions_common_1.Source {
                     'content-type': 'application/json'
                 }
             });
+            console.log(`getSearchResults: ${query.title}`);
             const response = yield this.requestManager.schedule(request, 1);
             const manga = this.parser.parseSearchResults(JSON.parse(response.data));
+            console.log(`getSearchResults: ${manga.length} results`);
             return createPagedResults({ results: manga });
         });
     }
@@ -17793,6 +17799,7 @@ class Parser {
                 time: new Date(chapterization.time_stamp * 1000)
             }));
         });
+        console.log(`parseChapters: ${chapters.length} Chapter`);
         return chapters;
     }
     parseChapterDetails($) {
