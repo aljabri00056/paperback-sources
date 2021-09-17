@@ -90,7 +90,7 @@ export class GManga extends Source {
             method: 'GET'
         })
 
-        console.log(`getChapterDetails: ${mangaId}-${chapterId}`)
+        console.log(`getChapterDetails: ${mangaId} - ${chapterId}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
 
