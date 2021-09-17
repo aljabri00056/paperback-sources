@@ -100,6 +100,8 @@ export class Parser {
             }))
         });
 
+        console.log(`parseChapters: ${chapters.length} Chapter`)
+
         return chapters
     }
 

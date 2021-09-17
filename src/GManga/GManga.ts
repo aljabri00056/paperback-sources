@@ -58,6 +58,7 @@ export class GManga extends Source {
             method: 'GET'
         })
 
+        console.log(`getMangaDetails: ${mangaId}`)
         const response = await this.requestManager.schedule(request, 1)
 
         const data = JSON.parse(response.data)
@@ -73,6 +74,8 @@ export class GManga extends Source {
             method: 'GET'
         })
 
+        console.log(`getChapters: ${mangaId}`)
+
         const response = await this.requestManager.schedule(pageRequest, 1)
         const data = JSON.parse(response.data)
 
@@ -87,11 +90,15 @@ export class GManga extends Source {
             method: 'GET'
         })
 
+        console.log(`getChapterDetails: ${mangaId}-${chapterId}`)
+
         const response = await this.requestManager.schedule(pageRequest, 1)
 
         let $ = this.cheerio.load(response.data)
 
         const pages: string[] = this.parser.parseChapterDetails($)
+
+        console.log(...pages)
 
         return createChapterDetails({
             id: chapterId,
@@ -114,9 +121,13 @@ export class GManga extends Source {
             }
         })
 
+        console.log(`getSearchResults: ${query.title}`)
+
         const response = await this.requestManager.schedule(request, 1)
 
         const manga = this.parser.parseSearchResults(JSON.parse(response.data))
+
+        console.log(`getSearchResults: ${manga.length} results`)
 
         return createPagedResults({ results: manga })
 
