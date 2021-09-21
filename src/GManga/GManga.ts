@@ -9,6 +9,7 @@ import {
     SourceInfo,
     LanguageCode,
     TagType,
+    MangaUpdates,
 } from 'paperback-extensions-common'
 
 import { Parser } from './GMangaParser'
@@ -21,7 +22,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '1.0.0',
+    version: '2.1.0',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -63,7 +64,7 @@ export class GManga extends Source {
 
         const data = JSON.parse(response.data)
 
-        return this.parser.parseMangaDetails(mangaId, data)
+        return this.parser.parseMangaDetails(mangaId, data, this.GMANGA_DOMAIN)
 
     }
 
@@ -125,11 +126,40 @@ export class GManga extends Source {
 
         const response = await this.requestManager.schedule(request, 1)
 
-        const manga = this.parser.parseSearchResults(JSON.parse(response.data))
+        const manga = this.parser.parseSearchResults(JSON.parse(response.data), this.GMANGA_DOMAIN)
 
         console.log(`getSearchResults: ${manga.length} results`)
 
         return createPagedResults({ results: manga })
+
+    }
+
+    override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
+        let loadNextPage = true
+        let currPageNum = 1
+
+        while (loadNextPage) {
+
+            const request = createRequestObject({
+                url: `${this.GMANGA_BaseUrl}/api/releases?page=${currPageNum}`,
+                method: 'GET'
+            })
+
+            const response = await this.requestManager.schedule(request, 1)
+            const data = JSON.parse(response.data)
+
+            const updatedManga = this.parser.filterUpdatedManga(data, time, ids)
+            loadNextPage = updatedManga.loadNextPage
+            if (loadNextPage) {
+                currPageNum++
+            }
+            if (updatedManga.updates.length > 0) {
+                mangaUpdatesFoundCallback(createMangaUpdates({
+                    ids: updatedManga.updates
+                }))
+            }
+        }
+
 
     }
 }

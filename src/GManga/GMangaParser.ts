@@ -4,6 +4,8 @@ import {
     Manga,
     MangaStatus,
     MangaTile,
+    Tag,
+    TagSection,
 } from 'paperback-extensions-common'
 
 import * as _ from "lodash"
@@ -25,6 +27,18 @@ export class Parser {
         dates: { start: null, end: null },
         page: 1
     };
+
+    storyStatus: { [key: number]: string } = {
+        2: "مستمرة",
+        3: "منتهية"
+    }
+
+    translationStatus: { [key: number]: string } = {
+        0: "منتهية",
+        1: "مستمرة",
+        2: "متوقفة",
+        3: "غير مترجمة"
+    }
 
     decryptResponse(t: string) {
         var e = t.split("|")
@@ -62,20 +76,67 @@ export class Parser {
         return (root ? _.zipObject(data['cols'], results) : results)
     }
 
-    parseMangaDetails(mangaId: string, data: any): Manga {
+    getTitles(data: any): any {
+
+        let titles: string[] = []
+
+        for (let key of ["title", "synonyms", "arabic_title", "english", "japanese"]) {
+
+            let title = data[key].trim()
+
+            if (typeof title === 'undefined' || titles.includes(title)) continue
+
+            titles.push(title)
+        }
+
+        return titles
+
+    }
+
+    parseMangaDetails(mangaId: string, data: any, domain: string): Manga {
 
         const mangaDetails = data.mangaData
 
         const status = mangaDetails.story_status == 2 ? MangaStatus.ONGOING : MangaStatus.COMPLETED
 
+        const tags: Tag[] = []
+
+        for (const tag of mangaDetails.categories) {
+            tags.push(createTag({
+                id: tag.id,
+                label: tag.name
+            }))
+        }
+
+        const MangaType = [createTag({
+            id: mangaDetails?.type?.id,
+            label: [mangaDetails?.type?.title, mangaDetails?.type?.name].join(' ')
+        })]
+
+        const TranslationStatus = [createTag({
+            id: mangaDetails.translation_status,
+            label: this.translationStatus[mangaDetails.translation_status] ?? ''
+        })]
+
+
+        const tagSections: TagSection[] = [
+            createTagSection({ id: 'Category', label: 'التصنيف', tags: tags }),
+            createTagSection({ id: 'MangaType', label: 'الأصل', tags: MangaType }),
+            createTagSection({ id: 'TranslationStatus', label: 'حالة الترجمة', tags: TranslationStatus })
+        ]
+
         return createManga({
             id: mangaId,
-            titles: [mangaDetails.title],
+            image: `https://media.${domain}/uploads/manga/cover/${mangaId}/${mangaDetails.cover}`,
+            rating: mangaDetails.rating,
             status: status,
-            rating: 0,
-            image: `https://media.gmanga.org/uploads/manga/cover/${mangaId}/${mangaDetails.cover}`
+            titles: this.getTitles(mangaDetails),
+            artist: mangaDetails?.['authors']?.[0]?.['name'],
+            author: mangaDetails?.['artists']?.[0]?.['name'],
+            desc: mangaDetails.summary,
+            follows: data.mangaLibrary.reading,
+            tags: tagSections
         })
-
 
     }
 
@@ -128,7 +189,7 @@ export class Parser {
 
     }
 
-    parseSearchResults(data: any): MangaTile[] {
+    parseSearchResults(data: any, domain: string): MangaTile[] {
         const mangaTiles: MangaTile[] = []
 
         data = data['iv'] ? this.decryptResponse(data.data) : data;
@@ -138,11 +199,37 @@ export class Parser {
             mangaTiles.push(createMangaTile({
                 id: JSON.stringify(manga.id),
                 title: createIconText({ text: manga.title }),
-                image: `https://media.gmanga.org/uploads/manga/cover/${manga.id}/${manga.cover}`
+                image: `https://media.${domain}/uploads/manga/cover/${manga.id}/${manga.cover}`
             }))
         })
 
         return mangaTiles
+
+    }
+
+    filterUpdatedManga(data: any, time: Date, ids: string[]) {
+        const foundIds: string[] = []
+        let passedReferenceTime = false
+
+        data = data['iv'] ? this.decryptResponse(data.data) : data;
+        data = data.rows.rows || [];
+
+        for (const item of data) {
+            const id = item[1]
+            const mangaTime = new Date(item[3] * 1000)
+            passedReferenceTime = mangaTime <= time
+            if (!passedReferenceTime) {
+                if (ids.includes(id)) {
+                    foundIds.push(id)
+                }
+            } else break
+        }
+
+        if (!passedReferenceTime) {
+            return { updates: foundIds, loadNextPage: true }
+        } else {
+            return { updates: foundIds, loadNextPage: false }
+        }
 
     }
 }
