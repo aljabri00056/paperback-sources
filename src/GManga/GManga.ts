@@ -32,7 +32,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.4',
+    version: '2.3.5',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -87,7 +87,8 @@ export class GManga extends Source {
     async getMangaDetails(mangaId: string): Promise<Manga> {
 
         const domain = await getDomain(this.stateManager)
-        const url = `https://${domain}/api/mangas/${mangaId}`
+        const backupDomain = await BackupDomain(this.stateManager)
+        const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/api/mangas/${mangaId}`
 
         const request = createRequestObject({
             url: url,
@@ -95,6 +96,7 @@ export class GManga extends Source {
         })
 
         console.log(`getMangaDetails: ${mangaId}`)
+        console.log(`getMangaDetails: BackupDomain: ${backupDomain}`)
         console.log(`getMangaDetails: ${url}`)
 
         const response = await this.requestManager.schedule(request, 1)
@@ -130,8 +132,7 @@ export class GManga extends Source {
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
 
         const domain = await getDomain(this.stateManager)
-        const backupDomain = await BackupDomain(this.stateManager)
-        const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/mangas/${chapterId}`
+        const url = `https://${domain}/mangas/${chapterId}`
 
         const pageRequest = createRequestObject({
             url: url,
@@ -139,7 +140,6 @@ export class GManga extends Source {
         })
 
         console.log(`getChapterDetails: ${mangaId} - ${chapterId}`)
-        console.log(`getChapterDetails: BackupDomain: ${backupDomain}`)
         console.log(`getChapterDetails: ${url}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
