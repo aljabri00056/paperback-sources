@@ -32,7 +32,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.0',
+    version: '2.3.3',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -87,14 +87,16 @@ export class GManga extends Source {
     async getMangaDetails(mangaId: string): Promise<Manga> {
 
         const domain = await getDomain(this.stateManager)
-        const baseUrl = `https://${domain}`
+        const url = `https://${domain}/api/mangas/${mangaId}`
 
         const request = createRequestObject({
-            url: `${baseUrl}/api/mangas/${mangaId}`,
+            url: url,
             method: 'GET'
         })
 
         console.log(`getMangaDetails: ${mangaId}`)
+        console.log(`getMangaDetails: ${url}`)
+
         const response = await this.requestManager.schedule(request, 1)
 
         const data = JSON.parse(response.data)
@@ -107,14 +109,15 @@ export class GManga extends Source {
 
         const domain = await getDomain(this.stateManager)
         const backupDomain = await BackupDomain(this.stateManager)
-        const baseUrl = `https://${backupDomain ? this.Backup_DOMAIN : domain}`
+        const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/api/mangas/${mangaId}/releases`
 
         const pageRequest = createRequestObject({
-            url: `${baseUrl}/api/mangas/${mangaId}/releases`,
+            url: url,
             method: 'GET'
         })
 
         console.log(`getChapters: ${mangaId}`)
+        console.log(`getChapters: ${url}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
         const data = JSON.parse(response.data)
@@ -127,14 +130,15 @@ export class GManga extends Source {
 
         const domain = await getDomain(this.stateManager)
         const backupDomain = await BackupDomain(this.stateManager)
-        const baseUrl = `https://${backupDomain ? this.Backup_DOMAIN : domain}`
+        const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/mangas/${chapterId}`
 
         const pageRequest = createRequestObject({
-            url: `${baseUrl}/mangas/${chapterId}`,
+            url: url,
             method: 'GET'
         })
 
         console.log(`getChapterDetails: ${mangaId} - ${chapterId}`)
+        console.log(`getChapterDetails: ${url}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
 
@@ -156,12 +160,12 @@ export class GManga extends Source {
     async getSearchResults(query: SearchRequest, _metadata: any): Promise<PagedResults> {
 
         const domain = await getDomain(this.stateManager)
-        const baseUrl = `https://${domain}`
+        const url = `https://${domain}/api/mangas/search`
 
         this.parser.mangaSearchBody.title = query.title ?? ''
 
         const request = createRequestObject({
-            url: `${baseUrl}/api/mangas/search`,
+            url: url,
             method: 'POST',
             data: JSON.stringify(this.parser.mangaSearchBody),
             headers: {
@@ -170,6 +174,7 @@ export class GManga extends Source {
         })
 
         console.log(`getSearchResults: ${query.title}`)
+        console.log(`getSearchResults: ${url}`)
 
         const response = await this.requestManager.schedule(request, 1)
 
@@ -183,16 +188,16 @@ export class GManga extends Source {
 
     override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
 
-        const domain = await getDomain(this.stateManager)
-        const baseUrl = `https://${domain}`
-
         let loadNextPage = true
         let currPageNum = 1
 
         while (loadNextPage) {
 
+            const domain = await getDomain(this.stateManager)
+            const url = `https://${domain}/api/releases?page=${currPageNum}`
+
             const request = createRequestObject({
-                url: `${baseUrl}/api/releases?page=${currPageNum}`,
+                url: url,
                 method: 'GET'
             })
 
