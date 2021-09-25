@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.4',
+    version: '2.3.5',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17659,12 +17659,14 @@ class GManga extends paperback_extensions_common_1.Source {
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
-            const url = `https://${domain}/api/mangas/${mangaId}`;
+            const backupDomain = yield GMangaSettings_1.BackupDomain(this.stateManager);
+            const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/api/mangas/${mangaId}`;
             const request = createRequestObject({
                 url: url,
                 method: 'GET'
             });
             console.log(`getMangaDetails: ${mangaId}`);
+            console.log(`getMangaDetails: BackupDomain: ${backupDomain}`);
             console.log(`getMangaDetails: ${url}`);
             const response = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(response.data);
@@ -17691,14 +17693,12 @@ class GManga extends paperback_extensions_common_1.Source {
     getChapterDetails(mangaId, chapterId) {
         return __awaiter(this, void 0, void 0, function* () {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
-            const backupDomain = yield GMangaSettings_1.BackupDomain(this.stateManager);
-            const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/mangas/${chapterId}`;
+            const url = `https://${domain}/mangas/${chapterId}`;
             const pageRequest = createRequestObject({
                 url: url,
                 method: 'GET'
             });
             console.log(`getChapterDetails: ${mangaId} - ${chapterId}`);
-            console.log(`getChapterDetails: BackupDomain: ${backupDomain}`);
             console.log(`getChapterDetails: ${url}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             let $ = this.cheerio.load(response.data);
