@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.3',
+    version: '2.3.4',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17681,6 +17681,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 method: 'GET'
             });
             console.log(`getChapters: ${mangaId}`);
+            console.log(`getChapters: BackupDomain: ${backupDomain}`);
             console.log(`getChapters: ${url}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             const data = JSON.parse(response.data);
@@ -17697,6 +17698,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 method: 'GET'
             });
             console.log(`getChapterDetails: ${mangaId} - ${chapterId}`);
+            console.log(`getChapterDetails: BackupDomain: ${backupDomain}`);
             console.log(`getChapterDetails: ${url}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             let $ = this.cheerio.load(response.data);
