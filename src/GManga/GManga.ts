@@ -32,7 +32,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.3',
+    version: '2.3.4',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -117,6 +117,7 @@ export class GManga extends Source {
         })
 
         console.log(`getChapters: ${mangaId}`)
+        console.log(`getChapters: BackupDomain: ${backupDomain}`)
         console.log(`getChapters: ${url}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
@@ -138,6 +139,7 @@ export class GManga extends Source {
         })
 
         console.log(`getChapterDetails: ${mangaId} - ${chapterId}`)
+        console.log(`getChapterDetails: BackupDomain: ${backupDomain}`)
         console.log(`getChapterDetails: ${url}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
