@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.0',
+    version: '2.3.3',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17659,12 +17659,13 @@ class GManga extends paperback_extensions_common_1.Source {
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
-            const baseUrl = `https://${domain}`;
+            const url = `https://${domain}/api/mangas/${mangaId}`;
             const request = createRequestObject({
-                url: `${baseUrl}/api/mangas/${mangaId}`,
+                url: url,
                 method: 'GET'
             });
             console.log(`getMangaDetails: ${mangaId}`);
+            console.log(`getMangaDetails: ${url}`);
             const response = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(response.data);
             return this.parser.parseMangaDetails(mangaId, data, domain);
@@ -17674,12 +17675,13 @@ class GManga extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
             const backupDomain = yield GMangaSettings_1.BackupDomain(this.stateManager);
-            const baseUrl = `https://${backupDomain ? this.Backup_DOMAIN : domain}`;
+            const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/api/mangas/${mangaId}/releases`;
             const pageRequest = createRequestObject({
-                url: `${baseUrl}/api/mangas/${mangaId}/releases`,
+                url: url,
                 method: 'GET'
             });
             console.log(`getChapters: ${mangaId}`);
+            console.log(`getChapters: ${url}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             const data = JSON.parse(response.data);
             return this.parser.parseChapters(mangaId, data);
@@ -17689,12 +17691,13 @@ class GManga extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
             const backupDomain = yield GMangaSettings_1.BackupDomain(this.stateManager);
-            const baseUrl = `https://${backupDomain ? this.Backup_DOMAIN : domain}`;
+            const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/mangas/${chapterId}`;
             const pageRequest = createRequestObject({
-                url: `${baseUrl}/mangas/${chapterId}`,
+                url: url,
                 method: 'GET'
             });
             console.log(`getChapterDetails: ${mangaId} - ${chapterId}`);
+            console.log(`getChapterDetails: ${url}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             let $ = this.cheerio.load(response.data);
             const pages = this.parser.parseChapterDetails($);
@@ -17711,10 +17714,10 @@ class GManga extends paperback_extensions_common_1.Source {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
-            const baseUrl = `https://${domain}`;
+            const url = `https://${domain}/api/mangas/search`;
             this.parser.mangaSearchBody.title = (_a = query.title) !== null && _a !== void 0 ? _a : '';
             const request = createRequestObject({
-                url: `${baseUrl}/api/mangas/search`,
+                url: url,
                 method: 'POST',
                 data: JSON.stringify(this.parser.mangaSearchBody),
                 headers: {
@@ -17722,6 +17725,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 }
             });
             console.log(`getSearchResults: ${query.title}`);
+            console.log(`getSearchResults: ${url}`);
             const response = yield this.requestManager.schedule(request, 1);
             const manga = this.parser.parseSearchResults(JSON.parse(response.data), domain);
             console.log(`getSearchResults: ${manga.length} results`);
@@ -17730,13 +17734,13 @@ class GManga extends paperback_extensions_common_1.Source {
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
         return __awaiter(this, void 0, void 0, function* () {
-            const domain = yield GMangaSettings_1.getDomain(this.stateManager);
-            const baseUrl = `https://${domain}`;
             let loadNextPage = true;
             let currPageNum = 1;
             while (loadNextPage) {
+                const domain = yield GMangaSettings_1.getDomain(this.stateManager);
+                const url = `https://${domain}/api/releases?page=${currPageNum}`;
                 const request = createRequestObject({
-                    url: `${baseUrl}/api/releases?page=${currPageNum}`,
+                    url: url,
                     method: 'GET'
                 });
                 const response = yield this.requestManager.schedule(request, 1);
