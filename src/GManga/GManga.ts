@@ -10,19 +10,29 @@ import {
     LanguageCode,
     TagType,
     MangaUpdates,
+    Request,
+    Section,
 } from 'paperback-extensions-common'
 
 import { Parser } from './GMangaParser'
 
-const GMANGA_DOMAIN = 'gmanga.org'
+import {
+    getDomain,
+    BackupDomain,
+    domainSettings,
+    resetSettings
+} from './GMangaSettings'
+
+const GMANGA_DOMAIN = 'gmanga.me'
 const GMANGA_BaseUrl = `https://${GMANGA_DOMAIN}`
+const Backup_DOMAIN = 'api2.gmanga.me'
 
 export const GMangaInfo: SourceInfo = {
     author: 'aljabri00056',
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.1.0',
+    version: '2.3.0',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -31,6 +41,11 @@ export const GMangaInfo: SourceInfo = {
         {
             text: 'Arabic',
             type: TagType.BLUE,
+        },
+
+        {
+            text: 'Cloudflare',
+            type: TagType.RED
         }
     ],
 }
@@ -40,6 +55,7 @@ export class GManga extends Source {
 
     GMANGA_DOMAIN = GMANGA_DOMAIN
     GMANGA_BaseUrl = GMANGA_BaseUrl
+    Backup_DOMAIN = Backup_DOMAIN
 
     parser = new Parser()
 
@@ -48,14 +64,33 @@ export class GManga extends Source {
         requestTimeout: 15000,
     })
 
+    stateManager = createSourceStateManager({ 'default_domain': this.GMANGA_DOMAIN })
+
+    override async getSourceMenu(): Promise<Section> {
+        return Promise.resolve(
+            createSection({
+                id: 'main',
+                header: 'Source Settings',
+                rows: () =>
+                    Promise.resolve([
+                        domainSettings(this.stateManager),
+                        resetSettings(this.stateManager)
+                    ])
+            })
+        )
+    }
+
     override getMangaShareUrl(mangaId: string): string {
         return `${this.GMANGA_BaseUrl}/mangas/${mangaId}`
     }
 
     async getMangaDetails(mangaId: string): Promise<Manga> {
 
+        const domain = await getDomain(this.stateManager)
+        const baseUrl = `https://${domain}`
+
         const request = createRequestObject({
-            url: `${this.GMANGA_BaseUrl}/api/mangas/${mangaId}`,
+            url: `${baseUrl}/api/mangas/${mangaId}`,
             method: 'GET'
         })
 
@@ -64,14 +99,18 @@ export class GManga extends Source {
 
         const data = JSON.parse(response.data)
 
-        return this.parser.parseMangaDetails(mangaId, data, this.GMANGA_DOMAIN)
+        return this.parser.parseMangaDetails(mangaId, data, domain)
 
     }
 
     async getChapters(mangaId: string): Promise<Chapter[]> {
 
+        const domain = await getDomain(this.stateManager)
+        const backupDomain = await BackupDomain(this.stateManager)
+        const baseUrl = `https://${backupDomain ? this.Backup_DOMAIN : domain}`
+
         const pageRequest = createRequestObject({
-            url: `${this.GMANGA_BaseUrl}/api/mangas/${mangaId}/releases`,
+            url: `${baseUrl}/api/mangas/${mangaId}/releases`,
             method: 'GET'
         })
 
@@ -86,8 +125,12 @@ export class GManga extends Source {
 
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
 
+        const domain = await getDomain(this.stateManager)
+        const backupDomain = await BackupDomain(this.stateManager)
+        const baseUrl = `https://${backupDomain ? this.Backup_DOMAIN : domain}`
+
         const pageRequest = createRequestObject({
-            url: `${this.GMANGA_BaseUrl}/mangas/${chapterId}`,
+            url: `${baseUrl}/mangas/${chapterId}`,
             method: 'GET'
         })
 
@@ -111,10 +154,14 @@ export class GManga extends Source {
     }
 
     async getSearchResults(query: SearchRequest, _metadata: any): Promise<PagedResults> {
+
+        const domain = await getDomain(this.stateManager)
+        const baseUrl = `https://${domain}`
+
         this.parser.mangaSearchBody.title = query.title ?? ''
 
         const request = createRequestObject({
-            url: `${this.GMANGA_BaseUrl}/api/mangas/search`,
+            url: `${baseUrl}/api/mangas/search`,
             method: 'POST',
             data: JSON.stringify(this.parser.mangaSearchBody),
             headers: {
@@ -126,7 +173,7 @@ export class GManga extends Source {
 
         const response = await this.requestManager.schedule(request, 1)
 
-        const manga = this.parser.parseSearchResults(JSON.parse(response.data), this.GMANGA_DOMAIN)
+        const manga = this.parser.parseSearchResults(JSON.parse(response.data), domain)
 
         console.log(`getSearchResults: ${manga.length} results`)
 
@@ -135,13 +182,17 @@ export class GManga extends Source {
     }
 
     override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
+
+        const domain = await getDomain(this.stateManager)
+        const baseUrl = `https://${domain}`
+
         let loadNextPage = true
         let currPageNum = 1
 
         while (loadNextPage) {
 
             const request = createRequestObject({
-                url: `${this.GMANGA_BaseUrl}/api/releases?page=${currPageNum}`,
+                url: `${baseUrl}/api/releases?page=${currPageNum}`,
                 method: 'GET'
             })
 
@@ -162,4 +213,12 @@ export class GManga extends Source {
 
 
     }
+
+    override getCloudflareBypassRequest(): Request {
+        return createRequestObject({
+            url: `${this.GMANGA_BaseUrl}`,
+            method: 'GET',
+        })
+    }
+
 }
