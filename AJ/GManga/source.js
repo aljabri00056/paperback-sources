@@ -17812,14 +17812,14 @@ class Parser {
             page: 1
         };
         this.storyStatus = {
-            2: "مستمرة",
-            3: "منتهية"
+            '2': "مستمرة",
+            '3': "منتهية"
         };
         this.translationStatus = {
-            0: "منتهية",
-            1: "مستمرة",
-            2: "متوقفة",
-            3: "غير مترجمة"
+            '0': "منتهية",
+            '1': "مستمرة",
+            '2': "متوقفة",
+            '3': "غير مترجمة"
         };
     }
     decryptResponse(t) {
@@ -17864,17 +17864,17 @@ class Parser {
         const tags = [];
         for (const tag of mangaDetails.categories) {
             tags.push(createTag({
-                id: tag.id,
+                id: tag.id.toString(),
                 label: tag.name
             }));
         }
         const MangaType = [createTag({
-                id: (_a = mangaDetails === null || mangaDetails === void 0 ? void 0 : mangaDetails.type) === null || _a === void 0 ? void 0 : _a.id,
+                id: (_a = mangaDetails === null || mangaDetails === void 0 ? void 0 : mangaDetails.type) === null || _a === void 0 ? void 0 : _a.id.toString(),
                 label: [(_b = mangaDetails === null || mangaDetails === void 0 ? void 0 : mangaDetails.type) === null || _b === void 0 ? void 0 : _b.title, (_c = mangaDetails === null || mangaDetails === void 0 ? void 0 : mangaDetails.type) === null || _c === void 0 ? void 0 : _c.name].join(' ')
             })];
         const TranslationStatus = [createTag({
-                id: mangaDetails.translation_status,
-                label: (_d = this.translationStatus[mangaDetails.translation_status]) !== null && _d !== void 0 ? _d : ''
+                id: mangaDetails.translation_status.toString(),
+                label: (_d = this.translationStatus[mangaDetails.translation_status.toString()]) !== null && _d !== void 0 ? _d : ''
             })];
         const tagSections = [
             createTagSection({ id: 'Category', label: 'التصنيف', tags: tags }),
