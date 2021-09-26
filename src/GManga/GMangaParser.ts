@@ -29,15 +29,15 @@ export class Parser {
     };
 
     storyStatus: { [key: number]: string } = {
-        2: "مستمرة",
-        3: "منتهية"
+        '2': "مستمرة",
+        '3': "منتهية"
     }
 
     translationStatus: { [key: number]: string } = {
-        0: "منتهية",
-        1: "مستمرة",
-        2: "متوقفة",
-        3: "غير مترجمة"
+        '0': "منتهية",
+        '1': "مستمرة",
+        '2': "متوقفة",
+        '3': "غير مترجمة"
     }
 
     decryptResponse(t: string) {
@@ -103,19 +103,19 @@ export class Parser {
 
         for (const tag of mangaDetails.categories) {
             tags.push(createTag({
-                id: tag.id,
+                id: tag.id.toString(),
                 label: tag.name
             }))
         }
 
         const MangaType = [createTag({
-            id: mangaDetails?.type?.id,
+            id: mangaDetails?.type?.id.toString(),
             label: [mangaDetails?.type?.title, mangaDetails?.type?.name].join(' ')
         })]
 
         const TranslationStatus = [createTag({
-            id: mangaDetails.translation_status,
-            label: this.translationStatus[mangaDetails.translation_status] ?? ''
+            id: mangaDetails.translation_status.toString(),
+            label: this.translationStatus[mangaDetails.translation_status.toString()] ?? ''
         })]
 
 
