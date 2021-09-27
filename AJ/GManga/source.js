@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.0',
+    version: '2.4.1',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17769,7 +17769,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 });
                 const response = yield this.requestManager.schedule(request, 1);
                 const data = JSON.parse(response.data);
-                const updatedManga = this.parser.filterUpdatedManga(data, time, ids);
+                const updatedManga = this.parser.parseFilterUpdatedManga(data, time, ids);
                 loadNextPage = updatedManga.loadNextPage;
                 if (loadNextPage) {
                     currPageNum++;
@@ -17980,7 +17980,7 @@ class Parser {
             id: `storyStatus_${tag}`, label: this.storyStatus[tag]
         }));
         tagSections[2].tags = Object.keys(this.translationStatus).map((tag) => createTag({
-            id: `translationStatus_${tag}`, label: this.storyStatus[tag]
+            id: `translationStatus_${tag}`, label: this.translationStatus[tag]
         }));
         for (const tag of data.categoryTypes) {
             const group = tag.name;
@@ -17992,7 +17992,7 @@ class Parser {
         }
         return tagSections;
     }
-    filterUpdatedManga(data, time, ids) {
+    parseFilterUpdatedManga(data, time, ids) {
         const foundIds = [];
         let passedReferenceTime = false;
         data = data['iv'] ? this.decryptResponse(data.data) : data;
