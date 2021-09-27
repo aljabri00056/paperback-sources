@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.7',
+    version: '2.4.0',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17713,7 +17713,7 @@ class GManga extends paperback_extensions_common_1.Source {
         });
     }
     getSearchResults(query, metadata) {
-        var _a, _b, _c;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
@@ -17729,8 +17729,6 @@ class GManga extends paperback_extensions_common_1.Source {
                 }
             });
             console.log(`getSearchResults: ${query.title}`);
-            console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`);
-            console.log(`getSearchResults: ${(_c = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _c !== void 0 ? _c : 'emtpy'}`);
             const response = yield this.requestManager.schedule(request, 1);
             const mangas = this.parser.parseSearchResults(JSON.parse(response.data), domain);
             console.log(`getSearchResults: ${mangas.length} results`);
@@ -17738,6 +17736,24 @@ class GManga extends paperback_extensions_common_1.Source {
                 results: mangas,
                 metadata: mangas.length > 0 ? { page: (page + 1) } : undefined
             });
+        });
+    }
+    getSearchTags() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const domain = yield GMangaSettings_1.getDomain(this.stateManager);
+            const url = `https://${domain}/mangas/`;
+            const request = createRequestObject({
+                url: url,
+                method: 'GET'
+            });
+            const response = yield this.requestManager.schedule(request, 1);
+            const $ = this.cheerio.load(response.data);
+            return this.parser.parseSearchTags($);
+        });
+    }
+    supportsTagExclusion() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return true;
         });
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
@@ -17950,6 +17966,31 @@ class Parser {
             }));
         });
         return mangaTiles;
+    }
+    parseSearchTags($) {
+        const tagSections = [
+            createTagSection({ id: 'mangaTypes', label: 'الأصل', tags: [] }),
+            createTagSection({ id: 'storyStatus', label: 'حالة القصة', tags: [] }),
+            createTagSection({ id: 'translationStatus', label: 'حالة الترجمة', tags: [] })
+        ];
+        const data = JSON.parse($(".js-react-on-rails-component").html());
+        const mangaTypes = data.mangaTypes;
+        tagSections[0].tags = mangaTypes.map((tag) => createTag({ id: `mangaTypes_${tag.id}`, label: tag.name }));
+        tagSections[1].tags = Object.keys(this.storyStatus).map((tag) => createTag({
+            id: `storyStatus_${tag}`, label: this.storyStatus[tag]
+        }));
+        tagSections[2].tags = Object.keys(this.translationStatus).map((tag) => createTag({
+            id: `translationStatus_${tag}`, label: this.storyStatus[tag]
+        }));
+        for (const tag of data.categoryTypes) {
+            const group = tag.name;
+            tagSections.push(createTagSection({
+                id: group,
+                label: group,
+                tags: tag.categories.map((tag) => createTag({ id: `categoryTypes_${tag.id}`, label: tag.name }))
+            }));
+        }
+        return tagSections;
     }
     filterUpdatedManga(data, time, ids) {
         const foundIds = [];
