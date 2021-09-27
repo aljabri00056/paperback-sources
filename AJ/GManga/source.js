@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.1',
+    version: '2.4.5',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17820,19 +17820,6 @@ const _ = __importStar(require("lodash"));
 const CryptoJS = require('./external/crypto-js.min.js');
 class Parser {
     constructor() {
-        this.mangaSearchBody = {
-            title: '',
-            manga_types: {
-                include: ['1', '2', '3', '4', '5', '6', '7', '8'],
-                exclude: []
-            },
-            story_status: { include: [], exclude: [] },
-            translation_status: { include: [], exclude: [3] },
-            categories: { include: [null], exclude: [] },
-            chapters: { min: '', max: '' },
-            dates: { start: null, end: null },
-            page: 1
-        };
         this.storyStatus = {
             '2': "مستمرة",
             '3': "منتهية"
@@ -17966,6 +17953,28 @@ class Parser {
             }));
         });
         return mangaTiles;
+    }
+    searchBody(query, page) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        const manga_types = (_a = query.includedTags) === null || _a === void 0 ? void 0 : _a.filter(type => type.id.includes('mangaTypes_')).map(type => type.id.replace('mangaTypes_', ''));
+        const excludedManga_types = (_b = query.excludedTags) === null || _b === void 0 ? void 0 : _b.filter(type => type.id.includes('mangaTypes_')).map(type => type.id.replace('mangaTypes_', ''));
+        const story_status = (_c = query.includedTags) === null || _c === void 0 ? void 0 : _c.filter(tag => tag.id.includes('storyStatus_')).map(tag => tag.id.replace('storyStatus_', ''));
+        const excludedStory_status = (_d = query.excludedTags) === null || _d === void 0 ? void 0 : _d.filter(tag => tag.id.includes('storyStatus_')).map(tag => tag.id.replace('storyStatus_', ''));
+        const translation_status = (_e = query.includedTags) === null || _e === void 0 ? void 0 : _e.filter(tag => tag.id.includes('translationStatus_')).map(tag => tag.id.replace('translationStatus_', ''));
+        const excludedTranslation_status = (_f = query.excludedTags) === null || _f === void 0 ? void 0 : _f.filter(tag => tag.id.includes('translationStatus_')).map(tag => tag.id.replace('translationStatus_', ''));
+        const categories = (_g = query.includedTags) === null || _g === void 0 ? void 0 : _g.filter(tag => tag.id.includes('categoryTypes_')).map(tag => tag.id.replace('categoryTypes_', ''));
+        const excludedCategories = (_h = query.excludedTags) === null || _h === void 0 ? void 0 : _h.filter(tag => tag.id.includes('categoryTypes_')).map(tag => tag.id.replace('categoryTypes_', ''));
+        return {
+            "title": (_j = query.title) !== null && _j !== void 0 ? _j : '',
+            "manga_types": { "include": manga_types, "exclude": excludedManga_types },
+            "oneshot": null,
+            "story_status": { "include": story_status, "exclude": excludedStory_status },
+            "translation_status": { "include": translation_status, "exclude": excludedTranslation_status },
+            "categories": { "include": categories, "exclude": excludedCategories },
+            "chapters": { "min": "", "max": "" },
+            "dates": { "start": null, "end": null },
+            "page": page
+        };
     }
     parseSearchTags($) {
         const tagSections = [
