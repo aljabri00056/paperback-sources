@@ -161,7 +161,7 @@ export class GManga extends Source {
 
     async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
 
-        let page: number = metadata?.page ?? 1
+        const page: number = metadata?.page ?? 1
 
         const domain = await getDomain(this.stateManager)
         const url = `https://${domain}/api/mangas/search`
@@ -190,7 +190,7 @@ export class GManga extends Source {
 
         return createPagedResults({
             results: mangas,
-            metadata: mangas.length > 0 ? { page: page++ } : undefined
+            metadata: mangas.length > 0 ? { page: (page + 1) } : undefined
         })
 
     }
