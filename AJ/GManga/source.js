@@ -17715,7 +17715,7 @@ class GManga extends paperback_extensions_common_1.Source {
     getSearchResults(query, metadata) {
         var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
-            let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
+            const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
             const url = `https://${domain}/api/mangas/search`;
             this.parser.mangaSearchBody.title = (_b = query.title) !== null && _b !== void 0 ? _b : '';
@@ -17736,7 +17736,7 @@ class GManga extends paperback_extensions_common_1.Source {
             console.log(`getSearchResults: ${mangas.length} results`);
             return createPagedResults({
                 results: mangas,
-                metadata: mangas.length > 0 ? { page: page++ } : undefined
+                metadata: mangas.length > 0 ? { page: (page + 1) } : undefined
             });
         });
     }
