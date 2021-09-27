@@ -17713,7 +17713,7 @@ class GManga extends paperback_extensions_common_1.Source {
         });
     }
     getSearchResults(query, metadata) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
@@ -17730,6 +17730,7 @@ class GManga extends paperback_extensions_common_1.Source {
             });
             console.log(`getSearchResults: ${query.title}`);
             console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`);
+            console.log(`getSearchResults: ${(_c = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _c !== void 0 ? _c : 'emtpy'}`);
             const response = yield this.requestManager.schedule(request, 1);
             const mangas = this.parser.parseSearchResults(JSON.parse(response.data), domain);
             console.log(`getSearchResults: ${mangas.length} results`);
