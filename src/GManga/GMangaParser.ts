@@ -225,7 +225,7 @@ export class Parser {
         }))
 
         tagSections[2]!.tags = Object.keys(this.translationStatus).map((tag: any) => createTag({
-            id: `translationStatus_${tag}`, label: this.storyStatus[tag]!
+            id: `translationStatus_${tag}`, label: this.translationStatus[tag]!
         }))
 
 
@@ -244,7 +244,7 @@ export class Parser {
         return tagSections
     }
 
-    filterUpdatedManga(data: any, time: Date, ids: string[]) {
+    parseFilterUpdatedManga(data: any, time: Date, ids: string[]) {
         const foundIds: string[] = []
         let passedReferenceTime = false
 

@@ -33,7 +33,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.0',
+    version: '2.4.1',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -232,7 +232,7 @@ export class GManga extends Source {
             const response = await this.requestManager.schedule(request, 1)
             const data = JSON.parse(response.data)
 
-            const updatedManga = this.parser.filterUpdatedManga(data, time, ids)
+            const updatedManga = this.parser.parseFilterUpdatedManga(data, time, ids)
             loadNextPage = updatedManga.loadNextPage
             if (loadNextPage) {
                 currPageNum++
