@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.5',
+    version: '2.3.7',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17712,12 +17712,13 @@ class GManga extends paperback_extensions_common_1.Source {
             });
         });
     }
-    getSearchResults(query, _metadata) {
-        var _a;
+    getSearchResults(query, metadata) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
+            let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
             const url = `https://${domain}/api/mangas/search`;
-            this.parser.mangaSearchBody.title = (_a = query.title) !== null && _a !== void 0 ? _a : '';
+            this.parser.mangaSearchBody.title = (_b = query.title) !== null && _b !== void 0 ? _b : '';
             const request = createRequestObject({
                 url: url,
                 method: 'POST',
@@ -17729,9 +17730,12 @@ class GManga extends paperback_extensions_common_1.Source {
             console.log(`getSearchResults: ${query.title}`);
             console.log(`getSearchResults: ${url}`);
             const response = yield this.requestManager.schedule(request, 1);
-            const manga = this.parser.parseSearchResults(JSON.parse(response.data), domain);
-            console.log(`getSearchResults: ${manga.length} results`);
-            return createPagedResults({ results: manga });
+            const mangas = this.parser.parseSearchResults(JSON.parse(response.data), domain);
+            console.log(`getSearchResults: ${mangas.length} results`);
+            return createPagedResults({
+                results: mangas,
+                metadata: mangas.length > 0 ? { page: page++ } : undefined
+            });
         });
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
