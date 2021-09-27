@@ -32,7 +32,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.5',
+    version: '2.3.7',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -159,7 +159,9 @@ export class GManga extends Source {
 
     }
 
-    async getSearchResults(query: SearchRequest, _metadata: any): Promise<PagedResults> {
+    async getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
+
+        let page: number = metadata?.page ?? 1
 
         const domain = await getDomain(this.stateManager)
         const url = `https://${domain}/api/mangas/search`
@@ -180,11 +182,14 @@ export class GManga extends Source {
 
         const response = await this.requestManager.schedule(request, 1)
 
-        const manga = this.parser.parseSearchResults(JSON.parse(response.data), domain)
+        const mangas = this.parser.parseSearchResults(JSON.parse(response.data), domain)
 
-        console.log(`getSearchResults: ${manga.length} results`)
+        console.log(`getSearchResults: ${mangas.length} results`)
 
-        return createPagedResults({ results: manga })
+        return createPagedResults({
+            results: mangas,
+            metadata: mangas.length > 0 ? { page: page++ } : undefined
+        })
 
     }
 

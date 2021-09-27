@@ -28,12 +28,12 @@ export class Parser {
         page: 1
     };
 
-    storyStatus: { [key: number]: string } = {
+    storyStatus: { [key: string]: string } = {
         '2': "مستمرة",
         '3': "منتهية"
     }
 
-    translationStatus: { [key: number]: string } = {
+    translationStatus: { [key: string]: string } = {
         '0': "منتهية",
         '1': "مستمرة",
         '2': "متوقفة",
