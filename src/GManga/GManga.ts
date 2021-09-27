@@ -180,6 +180,7 @@ export class GManga extends Source {
 
         console.log(`getSearchResults: ${query.title}`)
         console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`)
+        console.log(`getSearchResults: ${metadata?.page ?? 'emtpy'}`)
 
         const response = await this.requestManager.schedule(request, 1)
 
