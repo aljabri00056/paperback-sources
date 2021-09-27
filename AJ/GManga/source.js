@@ -17719,6 +17719,7 @@ class GManga extends paperback_extensions_common_1.Source {
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
             const url = `https://${domain}/api/mangas/search`;
             this.parser.mangaSearchBody.title = (_b = query.title) !== null && _b !== void 0 ? _b : '';
+            this.parser.mangaSearchBody.page = page;
             const request = createRequestObject({
                 url: url,
                 method: 'POST',
@@ -17728,7 +17729,6 @@ class GManga extends paperback_extensions_common_1.Source {
                 }
             });
             console.log(`getSearchResults: ${query.title}`);
-            console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`);
             const response = yield this.requestManager.schedule(request, 1);
             const mangas = this.parser.parseSearchResults(JSON.parse(response.data), domain);
             console.log(`getSearchResults: ${mangas.length} results`);
