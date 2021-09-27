@@ -179,6 +179,7 @@ export class GManga extends Source {
         })
 
         console.log(`getSearchResults: ${query.title}`)
+        console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`)
 
         const response = await this.requestManager.schedule(request, 1)
 
