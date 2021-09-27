@@ -12,6 +12,7 @@ import {
     MangaUpdates,
     Request,
     Section,
+    TagSection,
 } from 'paperback-extensions-common'
 
 import { Parser } from './GMangaParser'
@@ -32,7 +33,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.3.7',
+    version: '2.4.0',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -179,8 +180,6 @@ export class GManga extends Source {
         })
 
         console.log(`getSearchResults: ${query.title}`)
-        console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`)
-        console.log(`getSearchResults: ${metadata?.page ?? 'emtpy'}`)
 
         const response = await this.requestManager.schedule(request, 1)
 
@@ -194,6 +193,26 @@ export class GManga extends Source {
         })
 
     }
+
+    override async getSearchTags(): Promise<TagSection[]> {
+        const domain = await getDomain(this.stateManager)
+        const url = `https://${domain}/mangas/`
+
+        const request = createRequestObject({
+            url: url,
+            method: 'GET'
+        })
+
+        const response = await this.requestManager.schedule(request, 1)
+        const $ = this.cheerio.load(response.data)
+
+        return this.parser.parseSearchTags($)
+    }
+
+    override async supportsTagExclusion(): Promise<boolean> {
+        return true
+    }
+
 
     override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
 

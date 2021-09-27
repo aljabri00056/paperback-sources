@@ -207,6 +207,43 @@ export class Parser {
 
     }
 
+    parseSearchTags($: any): TagSection[] {
+
+        const tagSections: TagSection[] = [
+            createTagSection({ id: 'mangaTypes', label: 'الأصل', tags: [] }),
+            createTagSection({ id: 'storyStatus', label: 'حالة القصة', tags: [] }),
+            createTagSection({ id: 'translationStatus', label: 'حالة الترجمة', tags: [] })
+        ]
+
+        const data = JSON.parse($(".js-react-on-rails-component").html())
+
+        const mangaTypes = data.mangaTypes
+        tagSections[0]!.tags = mangaTypes.map((tag: any) => createTag({ id: `mangaTypes_${tag.id}`, label: tag.name }))
+
+        tagSections[1]!.tags = Object.keys(this.storyStatus).map((tag: any) => createTag({
+            id: `storyStatus_${tag}`, label: this.storyStatus[tag]!
+        }))
+
+        tagSections[2]!.tags = Object.keys(this.translationStatus).map((tag: any) => createTag({
+            id: `translationStatus_${tag}`, label: this.storyStatus[tag]!
+        }))
+
+
+        for (const tag of data.categoryTypes) {
+            const group = tag.name
+
+            tagSections.push(createTagSection({
+                id: group,
+                label: group,
+                tags: tag.categories.map((tag: any) =>
+                    createTag({ id: `categoryTypes_${tag.id}`, label: tag.name })
+                )
+            }))
+        }
+
+        return tagSections
+    }
+
     filterUpdatedManga(data: any, time: Date, ids: string[]) {
         const foundIds: string[] = []
         let passedReferenceTime = false
