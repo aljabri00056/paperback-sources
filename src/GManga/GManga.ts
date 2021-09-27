@@ -33,7 +33,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.5',
+    version: '2.4.6',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -167,13 +167,11 @@ export class GManga extends Source {
         const domain = await getDomain(this.stateManager)
         const url = `https://${domain}/api/mangas/search`
 
-        this.parser.mangaSearchBody.title = query.title ?? ''
-        this.parser.mangaSearchBody.page = page
 
         const request = createRequestObject({
             url: url,
             method: 'POST',
-            data: JSON.stringify(this.parser.mangaSearchBody),
+            data: this.parser.searchBody(query, page),
             headers: {
                 'content-type': 'application/json'
             }

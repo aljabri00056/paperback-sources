@@ -195,7 +195,7 @@ export class Parser {
 
     }
 
-    searchBody(query: SearchRequest, page: number): { [key: string]: any } {
+    searchBody(query: SearchRequest, page: number): string {
 
         const manga_types = query.includedTags
             ?.filter(type => type.id.includes('mangaTypes_'))
@@ -234,7 +234,7 @@ export class Parser {
 
 
 
-        return {
+        return JSON.stringify({
             "title": query.title ?? '',
             "manga_types": { "include": manga_types, "exclude": excludedManga_types },
             "oneshot": null,
@@ -244,7 +244,7 @@ export class Parser {
             "chapters": { "min": "", "max": "" },
             "dates": { "start": null, "end": null },
             "page": page
-        }
+        })
     }
 
 
