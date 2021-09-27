@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.5',
+    version: '2.4.6',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17713,17 +17713,15 @@ class GManga extends paperback_extensions_common_1.Source {
         });
     }
     getSearchResults(query, metadata) {
-        var _a, _b;
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const domain = yield GMangaSettings_1.getDomain(this.stateManager);
             const url = `https://${domain}/api/mangas/search`;
-            this.parser.mangaSearchBody.title = (_b = query.title) !== null && _b !== void 0 ? _b : '';
-            this.parser.mangaSearchBody.page = page;
             const request = createRequestObject({
                 url: url,
                 method: 'POST',
-                data: JSON.stringify(this.parser.mangaSearchBody),
+                data: this.parser.searchBody(query, page),
                 headers: {
                     'content-type': 'application/json'
                 }
@@ -17964,7 +17962,7 @@ class Parser {
         const excludedTranslation_status = (_f = query.excludedTags) === null || _f === void 0 ? void 0 : _f.filter(tag => tag.id.includes('translationStatus_')).map(tag => tag.id.replace('translationStatus_', ''));
         const categories = (_g = query.includedTags) === null || _g === void 0 ? void 0 : _g.filter(tag => tag.id.includes('categoryTypes_')).map(tag => tag.id.replace('categoryTypes_', ''));
         const excludedCategories = (_h = query.excludedTags) === null || _h === void 0 ? void 0 : _h.filter(tag => tag.id.includes('categoryTypes_')).map(tag => tag.id.replace('categoryTypes_', ''));
-        return {
+        return JSON.stringify({
             "title": (_j = query.title) !== null && _j !== void 0 ? _j : '',
             "manga_types": { "include": manga_types, "exclude": excludedManga_types },
             "oneshot": null,
@@ -17974,7 +17972,7 @@ class Parser {
             "chapters": { "min": "", "max": "" },
             "dates": { "start": null, "end": null },
             "page": page
-        };
+        });
     }
     parseSearchTags($) {
         const tagSections = [
