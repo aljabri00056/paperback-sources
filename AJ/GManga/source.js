@@ -17729,6 +17729,7 @@ class GManga extends paperback_extensions_common_1.Source {
                 }
             });
             console.log(`getSearchResults: ${query.title}`);
+            console.log(`getSearchResults: ${JSON.stringify(this.parser.mangaSearchBody)}`);
             const response = yield this.requestManager.schedule(request, 1);
             const mangas = this.parser.parseSearchResults(JSON.parse(response.data), domain);
             console.log(`getSearchResults: ${mangas.length} results`);
