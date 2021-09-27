@@ -4,6 +4,7 @@ import {
     Manga,
     MangaStatus,
     MangaTile,
+    SearchRequest,
     Tag,
     TagSection,
 } from 'paperback-extensions-common'
@@ -14,19 +15,6 @@ const CryptoJS = require('./external/crypto-js.min.js')
 
 export class Parser {
 
-    mangaSearchBody = {
-        title: '',
-        manga_types: {
-            include: ['1', '2', '3', '4', '5', '6', '7', '8'],
-            exclude: []
-        },
-        story_status: { include: [], exclude: [] },
-        translation_status: { include: [], exclude: [3] },
-        categories: { include: [null], exclude: [] },
-        chapters: { min: '', max: '' },
-        dates: { start: null, end: null },
-        page: 1
-    };
 
     storyStatus: { [key: string]: string } = {
         '2': "مستمرة",
@@ -206,6 +194,59 @@ export class Parser {
         return mangaTiles
 
     }
+
+    searchBody(query: SearchRequest, page: number): { [key: string]: any } {
+
+        const manga_types = query.includedTags
+            ?.filter(type => type.id.includes('mangaTypes_'))
+            .map(type => type.id.replace('mangaTypes_', ''))
+
+        const excludedManga_types = query.excludedTags
+            ?.filter(type => type.id.includes('mangaTypes_'))
+            .map(type => type.id.replace('mangaTypes_', ''))
+
+
+        const story_status = query.includedTags
+            ?.filter(tag => tag.id.includes('storyStatus_'))
+            .map(tag => tag.id.replace('storyStatus_', ''))
+
+        const excludedStory_status = query.excludedTags
+            ?.filter(tag => tag.id.includes('storyStatus_'))
+            .map(tag => tag.id.replace('storyStatus_', ''))
+
+
+        const translation_status = query.includedTags
+            ?.filter(tag => tag.id.includes('translationStatus_'))
+            .map(tag => tag.id.replace('translationStatus_', ''))
+
+        const excludedTranslation_status = query.excludedTags
+            ?.filter(tag => tag.id.includes('translationStatus_'))
+            .map(tag => tag.id.replace('translationStatus_', ''))
+
+
+        const categories = query.includedTags
+            ?.filter(tag => tag.id.includes('categoryTypes_'))
+            .map(tag => tag.id.replace('categoryTypes_', ''))
+
+        const excludedCategories = query.excludedTags
+            ?.filter(tag => tag.id.includes('categoryTypes_'))
+            .map(tag => tag.id.replace('categoryTypes_', ''))
+
+
+
+        return {
+            "title": query.title ?? '',
+            "manga_types": { "include": manga_types, "exclude": excludedManga_types },
+            "oneshot": null,
+            "story_status": { "include": story_status, "exclude": excludedStory_status },
+            "translation_status": { "include": translation_status, "exclude": excludedTranslation_status },
+            "categories": { "include": categories, "exclude": excludedCategories },
+            "chapters": { "min": "", "max": "" },
+            "dates": { "start": null, "end": null },
+            "page": page
+        }
+    }
+
 
     parseSearchTags($: any): TagSection[] {
 
