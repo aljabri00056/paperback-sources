@@ -296,9 +296,10 @@ export class Parser {
 
         const hotSection = createHomeSection({ id: 'hotMangas', title: 'المانجات الرائجة', type: HomeSectionType.featured })
         const finishedSection = createHomeSection({ id: 'finishedMangas', title: 'مانجات اكتملت ترجمتها آخر ٧ أيام' })
-        const recommendedSection = createHomeSection({ id: 'recommended', title: '' })
-
-        recommendedSection.title = data.collectionDataAction.collection.title
+        const recommendedSection = createHomeSection({
+            id: 'recommended',
+            title: data.collectionDataAction.collection.title.trim() ?? 'Recommendations'
+        })
 
         const hot = { mangas: data.hotMangasAction.hotMangas }
         const finished = { mangas: data.mangaDataAction.finishedMangas }
