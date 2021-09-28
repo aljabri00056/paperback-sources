@@ -18013,13 +18013,16 @@ class Parser {
         return tagSections;
     }
     parseHomeSections($, sectionCallback) {
+        var _a;
         let data = $(".js-react-on-rails-component").html();
         data = JSON.parse(data);
         let server = data.globals.wla.configs.media_server.replace('//media.', '');
         const hotSection = createHomeSection({ id: 'hotMangas', title: 'المانجات الرائجة', type: paperback_extensions_common_1.HomeSectionType.featured });
         const finishedSection = createHomeSection({ id: 'finishedMangas', title: 'مانجات اكتملت ترجمتها آخر ٧ أيام' });
-        const recommendedSection = createHomeSection({ id: 'recommended', title: '' });
-        recommendedSection.title = data.collectionDataAction.collection.title;
+        const recommendedSection = createHomeSection({
+            id: 'recommended',
+            title: (_a = data.collectionDataAction.collection.title.trim()) !== null && _a !== void 0 ? _a : 'Recommendations'
+        });
         const hot = { mangas: data.hotMangasAction.hotMangas };
         const finished = { mangas: data.mangaDataAction.finishedMangas };
         const recommended = { mangas: data.collectionDataAction.collection.mangas };
