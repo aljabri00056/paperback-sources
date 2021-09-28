@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.6',
+    version: '2.5.0',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17752,6 +17752,19 @@ class GManga extends paperback_extensions_common_1.Source {
     supportsTagExclusion() {
         return __awaiter(this, void 0, void 0, function* () {
             return true;
+        });
+    }
+    getHomePageSections(sectionCallback) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const domain = yield GMangaSettings_1.getDomain(this.stateManager);
+            const url = `https://${domain}/mangas/featured`;
+            const request = createRequestObject({
+                url: url,
+                method: 'GET'
+            });
+            const response = yield this.requestManager.schedule(request, 1);
+            const $ = this.cheerio.load(response.data);
+            this.parser.parseHomeSections($, sectionCallback);
         });
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
@@ -17998,6 +18011,26 @@ class Parser {
             }));
         }
         return tagSections;
+    }
+    parseHomeSections($, sectionCallback) {
+        let data = $(".js-react-on-rails-component").html();
+        data = JSON.parse(data);
+        let server = data.globals.wla.configs.media_server.replace('//media.', '');
+        const hotSection = createHomeSection({ id: 'hotMangas', title: 'المانجات الرائجة', type: paperback_extensions_common_1.HomeSectionType.featured });
+        const finishedSection = createHomeSection({ id: 'finishedMangas', title: 'مانجات اكتملت ترجمتها آخر ٧ أيام' });
+        const recommendedSection = createHomeSection({ id: 'recommended', title: '' });
+        recommendedSection.title = data.collectionDataAction.collection.title;
+        const hot = { mangas: data.hotMangasAction.hotMangas };
+        const finished = { mangas: data.mangaDataAction.finishedMangas };
+        const recommended = { mangas: data.collectionDataAction.collection.mangas };
+        const sections = [hotSection, finishedSection, recommendedSection];
+        const sectionData = [hot, finished, recommended];
+        for (const [i, section] of sections.entries()) {
+            sectionCallback(section);
+            const manga = this.parseSearchResults(sectionData[i], server);
+            section.items = manga;
+            sectionCallback(section);
+        }
     }
     parseFilterUpdatedManga(data, time, ids) {
         const foundIds = [];
