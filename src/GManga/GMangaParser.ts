@@ -1,5 +1,7 @@
 import {
     Chapter,
+    HomeSection,
+    HomeSectionType,
     LanguageCode,
     Manga,
     MangaStatus,
@@ -283,6 +285,36 @@ export class Parser {
         }
 
         return tagSections
+    }
+
+    parseHomeSections($: any, sectionCallback: (section: HomeSection) => void): void {
+
+        let data = $(".js-react-on-rails-component").html()
+        data = JSON.parse(data)
+
+        let server = data.globals.wla.configs.media_server.replace('//media.', '')
+
+        const hotSection = createHomeSection({ id: 'hotMangas', title: 'المانجات الرائجة', type: HomeSectionType.featured })
+        const finishedSection = createHomeSection({ id: 'finishedMangas', title: 'مانجات اكتملت ترجمتها آخر ٧ أيام' })
+        const recommendedSection = createHomeSection({ id: 'recommended', title: '' })
+
+        recommendedSection.title = data.collectionDataAction.collection.title
+
+        const hot = { mangas: data.hotMangasAction.hotMangas }
+        const finished = { mangas: data.mangaDataAction.finishedMangas }
+        const recommended = { mangas: data.collectionDataAction.collection.mangas }
+
+        const sections = [hotSection, finishedSection, recommendedSection]
+        const sectionData = [hot, finished, recommended]
+
+        for (const [i, section] of sections.entries()) {
+            sectionCallback(section)
+            const manga: MangaTile[] = this.parseSearchResults(sectionData[i], server)
+            section.items = manga
+            sectionCallback(section)
+        }
+
+
     }
 
     parseFilterUpdatedManga(data: any, time: Date, ids: string[]) {

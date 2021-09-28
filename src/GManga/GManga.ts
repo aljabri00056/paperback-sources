@@ -13,6 +13,7 @@ import {
     Request,
     Section,
     TagSection,
+    HomeSection,
 } from 'paperback-extensions-common'
 
 import { Parser } from './GMangaParser'
@@ -33,7 +34,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.4.6',
+    version: '2.5.0',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -209,6 +210,22 @@ export class GManga extends Source {
 
     override async supportsTagExclusion(): Promise<boolean> {
         return true
+    }
+
+
+    override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
+        const domain = await getDomain(this.stateManager)
+        const url = `https://${domain}/mangas/featured`
+
+        const request = createRequestObject({
+            url: url,
+            method: 'GET'
+        })
+
+        const response = await this.requestManager.schedule(request, 1)
+        const $ = this.cheerio.load(response.data)
+
+        this.parser.parseHomeSections($, sectionCallback)
     }
 
 
