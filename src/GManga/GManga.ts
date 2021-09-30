@@ -34,7 +34,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.5.6',
+    version: '2.5.8',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -55,7 +55,6 @@ export const GMangaInfo: SourceInfo = {
 
 export class GManga extends Source {
 
-    GMANGA_DOMAIN = GMANGA_DOMAIN
     GMANGA_BaseUrl = GMANGA_BaseUrl
     Backup_DOMAIN = Backup_DOMAIN
 
@@ -68,7 +67,7 @@ export class GManga extends Source {
 
     stateManager = createSourceStateManager({})
 
-    __ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN)
+    __ = this.stateManager.store('default_domain', GMANGA_DOMAIN)
 
     override async getSourceMenu(): Promise<Section> {
         return Promise.resolve(
@@ -100,7 +99,6 @@ export class GManga extends Source {
         })
 
         console.log(`getMangaDetails: ${mangaId}`)
-        console.log(`getMangaDetails: BackupDomain: ${backupDomain}`)
         console.log(`getMangaDetails: ${url}`)
 
         const response = await this.requestManager.schedule(request, 1)
@@ -123,7 +121,6 @@ export class GManga extends Source {
         })
 
         console.log(`getChapters: ${mangaId}`)
-        console.log(`getChapters: BackupDomain: ${backupDomain}`)
         console.log(`getChapters: ${url}`)
 
         const response = await this.requestManager.schedule(pageRequest, 1)
