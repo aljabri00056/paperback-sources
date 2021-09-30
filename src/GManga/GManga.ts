@@ -34,7 +34,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.5.0',
+    version: '2.5.5',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -66,7 +66,9 @@ export class GManga extends Source {
         requestTimeout: 15000,
     })
 
-    stateManager = createSourceStateManager({ 'default_domain': this.GMANGA_DOMAIN })
+    stateManager = createSourceStateManager({})
+
+    _ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN)
 
     override async getSourceMenu(): Promise<Section> {
         return Promise.resolve(

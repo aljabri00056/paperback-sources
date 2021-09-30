@@ -136,13 +136,13 @@ export class Parser {
         data = data['iv'] ? this.decryptResponse(data.data) : data;
         data = data['isCompact'] ? this.pack(data) : data;
 
-        data.releases.map((chapter: any) => {
+        data.releases?.map((chapter: any) => {
             const team = data.teams.find((t: any) => t.id === chapter.team_id);
             const chapterization = data.chapterizations.find((c: any) => c.id === chapter.chapterization_id);
             chapters.push(createChapter({
                 id: encodeURIComponent([mangaId, 'manga-slug', chapterization.chapter, team.name].join('/')),
                 mangaId: mangaId,
-                volume: Number.isNaN(chapterization.volume) ? 0 : chapterization.volume,
+                // volume: Number.isNaN(chapterization.volume) ? 0 : chapterization.volume,
                 chapNum: Number(chapterization.chapter),
                 group: team.name ?? '',
                 langCode: LanguageCode.SANSKRIT,
