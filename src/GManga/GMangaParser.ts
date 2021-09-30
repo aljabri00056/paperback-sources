@@ -124,7 +124,7 @@ export class Parser {
             artist: mangaDetails?.['authors']?.[0]?.['name'],
             author: mangaDetails?.['artists']?.[0]?.['name'],
             desc: mangaDetails.summary,
-            follows: data.mangaLibrary.reading,
+            follows: data.mangaLibrary?.reading,
             tags: tagSections
         })
 
@@ -135,6 +135,8 @@ export class Parser {
 
         data = data['iv'] ? this.decryptResponse(data.data) : data;
         data = data['isCompact'] ? this.pack(data) : data;
+        // delete empty keys
+        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
 
         data.releases?.map((chapter: any) => {
             const team = data.teams.find((t: any) => t.id === chapter.team_id);
