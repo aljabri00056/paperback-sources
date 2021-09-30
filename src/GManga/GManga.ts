@@ -68,7 +68,7 @@ export class GManga extends Source {
 
     stateManager = createSourceStateManager({})
 
-    _ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN)
+    __ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN)
 
     override async getSourceMenu(): Promise<Section> {
         return Promise.resolve(
