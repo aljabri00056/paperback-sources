@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.5.0',
+    version: '2.5.5',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17639,7 +17639,8 @@ class GManga extends paperback_extensions_common_1.Source {
             requestsPerSecond: 4,
             requestTimeout: 15000,
         });
-        this.stateManager = createSourceStateManager({ 'default_domain': this.GMANGA_DOMAIN });
+        this.stateManager = createSourceStateManager({});
+        this._ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN);
     }
     getSourceMenu() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -17915,17 +17916,18 @@ class Parser {
         });
     }
     parseChapters(mangaId, data) {
+        var _a;
         const chapters = [];
         data = data['iv'] ? this.decryptResponse(data.data) : data;
         data = data['isCompact'] ? this.pack(data) : data;
-        data.releases.map((chapter) => {
+        (_a = data.releases) === null || _a === void 0 ? void 0 : _a.map((chapter) => {
             var _a;
             const team = data.teams.find((t) => t.id === chapter.team_id);
             const chapterization = data.chapterizations.find((c) => c.id === chapter.chapterization_id);
             chapters.push(createChapter({
                 id: encodeURIComponent([mangaId, 'manga-slug', chapterization.chapter, team.name].join('/')),
                 mangaId: mangaId,
-                volume: Number.isNaN(chapterization.volume) ? 0 : chapterization.volume,
+                // volume: Number.isNaN(chapterization.volume) ? 0 : chapterization.volume,
                 chapNum: Number(chapterization.chapter),
                 group: (_a = team.name) !== null && _a !== void 0 ? _a : '',
                 langCode: paperback_extensions_common_1.LanguageCode.SANSKRIT,
