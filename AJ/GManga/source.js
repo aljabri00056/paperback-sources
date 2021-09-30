@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.5.5',
+    version: '2.5.6',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17879,7 +17879,7 @@ class Parser {
         return titles;
     }
     parseMangaDetails(mangaId, data, domain) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const mangaDetails = data.mangaData;
         const status = mangaDetails.story_status == 2 ? paperback_extensions_common_1.MangaStatus.ONGOING : paperback_extensions_common_1.MangaStatus.COMPLETED;
         const tags = [];
@@ -17911,7 +17911,7 @@ class Parser {
             artist: (_f = (_e = mangaDetails === null || mangaDetails === void 0 ? void 0 : mangaDetails['authors']) === null || _e === void 0 ? void 0 : _e[0]) === null || _f === void 0 ? void 0 : _f['name'],
             author: (_h = (_g = mangaDetails === null || mangaDetails === void 0 ? void 0 : mangaDetails['artists']) === null || _g === void 0 ? void 0 : _g[0]) === null || _h === void 0 ? void 0 : _h['name'],
             desc: mangaDetails.summary,
-            follows: data.mangaLibrary.reading,
+            follows: (_j = data.mangaLibrary) === null || _j === void 0 ? void 0 : _j.reading,
             tags: tagSections
         });
     }
@@ -17920,6 +17920,8 @@ class Parser {
         const chapters = [];
         data = data['iv'] ? this.decryptResponse(data.data) : data;
         data = data['isCompact'] ? this.pack(data) : data;
+        // delete empty keys
+        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
         (_a = data.releases) === null || _a === void 0 ? void 0 : _a.map((chapter) => {
             var _a;
             const team = data.teams.find((t) => t.id === chapter.team_id);
