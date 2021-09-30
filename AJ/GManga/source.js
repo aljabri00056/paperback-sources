@@ -17612,7 +17612,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.5.6',
+    version: '2.5.8',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17631,7 +17631,6 @@ exports.GMangaInfo = {
 class GManga extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
-        this.GMANGA_DOMAIN = GMANGA_DOMAIN;
         this.GMANGA_BaseUrl = GMANGA_BaseUrl;
         this.Backup_DOMAIN = Backup_DOMAIN;
         this.parser = new GMangaParser_1.Parser();
@@ -17640,7 +17639,7 @@ class GManga extends paperback_extensions_common_1.Source {
             requestTimeout: 15000,
         });
         this.stateManager = createSourceStateManager({});
-        this.__ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN);
+        this.__ = this.stateManager.store('default_domain', GMANGA_DOMAIN);
     }
     getSourceMenu() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -17667,7 +17666,6 @@ class GManga extends paperback_extensions_common_1.Source {
                 method: 'GET'
             });
             console.log(`getMangaDetails: ${mangaId}`);
-            console.log(`getMangaDetails: BackupDomain: ${backupDomain}`);
             console.log(`getMangaDetails: ${url}`);
             const response = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(response.data);
@@ -17684,7 +17682,6 @@ class GManga extends paperback_extensions_common_1.Source {
                 method: 'GET'
             });
             console.log(`getChapters: ${mangaId}`);
-            console.log(`getChapters: BackupDomain: ${backupDomain}`);
             console.log(`getChapters: ${url}`);
             const response = yield this.requestManager.schedule(pageRequest, 1);
             const data = JSON.parse(response.data);
