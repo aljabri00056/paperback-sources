@@ -17640,7 +17640,7 @@ class GManga extends paperback_extensions_common_1.Source {
             requestTimeout: 15000,
         });
         this.stateManager = createSourceStateManager({});
-        this._ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN);
+        this.__ = this.stateManager.store('default_domain', this.GMANGA_DOMAIN);
     }
     getSourceMenu() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -17842,6 +17842,29 @@ class Parser {
             '2': "متوقفة",
             '3': "غير مترجمة"
         };
+        this.cleanObject = (object) => {
+            Object
+                .entries(object)
+                .forEach(([k, v]) => {
+                if (v && typeof v === 'object')
+                    this.cleanObject(v);
+                if (v &&
+                    typeof v === 'object' &&
+                    !Object.keys(v).length ||
+                    v === null ||
+                    v === undefined ||
+                    // @ts-ignore
+                    v.length === 0) {
+                    if (Array.isArray(object))
+                        // @ts-ignore
+                        object.splice(k, 1);
+                    else if (!(v instanceof Date))
+                        // @ts-ignore
+                        delete object[k];
+                }
+            });
+            return object;
+        };
     }
     decryptResponse(t) {
         var e = t.split("|"), n = e[0], r = e[2], o = e[3], i = CryptoJS.SHA256(o).toString(), a = CryptoJS.AES.decrypt({
@@ -17921,7 +17944,7 @@ class Parser {
         data = data['iv'] ? this.decryptResponse(data.data) : data;
         data = data['isCompact'] ? this.pack(data) : data;
         // delete empty keys
-        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
+        data = this.cleanObject(data);
         (_a = data.releases) === null || _a === void 0 ? void 0 : _a.map((chapter) => {
             var _a;
             const team = data.teams.find((t) => t.id === chapter.team_id);
