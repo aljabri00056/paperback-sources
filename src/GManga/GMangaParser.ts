@@ -66,6 +66,32 @@ export class Parser {
         return (root ? _.zipObject(data['cols'], results) : results)
     }
 
+    cleanObject = (object: object) => {
+        Object
+            .entries(object)
+            .forEach(([k, v]) => {
+                if (v && typeof v === 'object')
+                    this.cleanObject(v);
+                if (v &&
+                    typeof v === 'object' &&
+                    !Object.keys(v).length ||
+                    v === null ||
+                    v === undefined ||
+                    // @ts-ignore
+                    v.length === 0
+                ) {
+                    if (Array.isArray(object))
+                        // @ts-ignore
+                        object.splice(k, 1);
+                    else if (!(v instanceof Date))
+                        // @ts-ignore
+                        delete object[k];
+                }
+            });
+        return object;
+    }
+
+
     getTitles(data: any): any {
 
         let titles: string[] = []
@@ -136,7 +162,7 @@ export class Parser {
         data = data['iv'] ? this.decryptResponse(data.data) : data;
         data = data['isCompact'] ? this.pack(data) : data;
         // delete empty keys
-        data = Object.fromEntries(Object.entries(data).filter(([_, v]) => v != null));
+        data = this.cleanObject(data);
 
         data.releases?.map((chapter: any) => {
             const team = data.teams.find((t: any) => t.id === chapter.team_id);
