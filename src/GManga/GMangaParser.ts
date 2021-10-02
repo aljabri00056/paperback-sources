@@ -357,6 +357,9 @@ export class Parser {
             const id = item[1]
             const mangaTime = new Date(item[3] * 1000)
             passedReferenceTime = mangaTime <= time
+            console.log(time)
+            console.log(mangaTime)
+            console.log(passedReferenceTime)
             if (!passedReferenceTime) {
                 if (ids.includes(id)) {
                     foundIds.push(id)
