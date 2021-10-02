@@ -351,7 +351,7 @@ export class Parser {
         let passedReferenceTime = false
 
         data = data['iv'] ? this.decryptResponse(data.data) : data;
-        data = data.rows.rows || [];
+        data = data.rows[0].rows || [];
 
         for (const item of data) {
             const id = item[1]
