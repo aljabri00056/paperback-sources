@@ -17957,7 +17957,7 @@ class Parser {
         else {
             images = data.webp_pages.map((page) => '/hq_webp/' + page);
         }
-        images.map((image) => { pages.push(encodeURIComponent(`${url}${data.storage_key + image}`)); });
+        images.map((image) => { pages.push(encodeURI(`${url}${data.storage_key + image}`)); });
         return pages;
     }
     parseSearchResults(data, domain) {
