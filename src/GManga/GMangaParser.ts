@@ -201,7 +201,7 @@ export class Parser {
             images = data.webp_pages.map((page: any) => '/hq_webp/' + page);
         }
 
-        images.map((image: any) => { pages.push(`${url}${data.storage_key + image}`) })
+        images.map((image: any) => { pages.push(encodeURIComponent(`${url}${data.storage_key + image}`)) })
 
         return pages
 
