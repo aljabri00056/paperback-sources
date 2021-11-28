@@ -17596,7 +17596,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.6.2',
+    version: '2.6.5',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17957,7 +17957,7 @@ class Parser {
         else {
             images = data.webp_pages.map((page) => '/hq_webp/' + page);
         }
-        images.map((image) => { pages.push(`${url}${data.storage_key + image}`); });
+        images.map((image) => { pages.push(encodeURIComponent(`${url}${data.storage_key + image}`)); });
         return pages;
     }
     parseSearchResults(data, domain) {
