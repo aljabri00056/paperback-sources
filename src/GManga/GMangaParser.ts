@@ -273,7 +273,8 @@ export class Parser {
             "categories": { "include": categories, "exclude": excludedCategories },
             "chapters": { "min": "", "max": "" },
             "dates": { "start": null, "end": null },
-            "page": page
+            "page": page,
+            "totalRecords": null
         })
     }
 
