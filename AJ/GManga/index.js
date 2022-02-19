@@ -17596,7 +17596,7 @@ exports.GMangaInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.6.6',
+    version: '2.6.7',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
@@ -17699,7 +17699,8 @@ class GManga extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const domain = yield (0, GMangaSettings_1.getDomain)(this.stateManager);
-            const url = `https://${domain}/api/mangas/search`;
+            const backupDomain = yield (0, GMangaSettings_1.BackupDomain)(this.stateManager);
+            const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/api/mangas/search`;
             const request = createRequestObject({
                 url: url,
                 method: 'POST',
@@ -17986,7 +17987,9 @@ class Parser {
         return JSON.stringify({
             "title": (_j = query.title) !== null && _j !== void 0 ? _j : '',
             "manga_types": { "include": manga_types, "exclude": excludedManga_types },
-            "oneshot": null,
+            "oneshot": {
+                "value": null
+            },
             "story_status": { "include": story_status, "exclude": excludedStory_status },
             "translation_status": { "include": translation_status, "exclude": excludedTranslation_status },
             "categories": { "include": categories, "exclude": excludedCategories },
