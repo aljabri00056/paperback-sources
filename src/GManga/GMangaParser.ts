@@ -267,7 +267,9 @@ export class Parser {
         return JSON.stringify({
             "title": query.title ?? '',
             "manga_types": { "include": manga_types, "exclude": excludedManga_types },
-            "oneshot": null,
+            "oneshot": {
+                "value":null
+             },
             "story_status": { "include": story_status, "exclude": excludedStory_status },
             "translation_status": { "include": translation_status, "exclude": excludedTranslation_status },
             "categories": { "include": categories, "exclude": excludedCategories },

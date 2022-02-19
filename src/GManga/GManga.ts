@@ -34,7 +34,7 @@ export const GMangaInfo: SourceInfo = {
     description: 'Extension that pulls manga from GManga',
     icon: 'icon.png',
     name: 'GManga',
-    version: '2.6.6',
+    version: '2.6.7',
     authorWebsite: 'https://github.com/aljabri00056',
     websiteBaseURL: GMANGA_BaseUrl,
     contentRating: ContentRating.EVERYONE,
@@ -165,7 +165,8 @@ export class GManga extends Source {
         const page: number = metadata?.page ?? 1
 
         const domain = await getDomain(this.stateManager)
-        const url = `https://${domain}/api/mangas/search`
+        const backupDomain = await BackupDomain(this.stateManager)
+        const url = `https://${backupDomain ? this.Backup_DOMAIN : domain}/api/mangas/search`
 
 
         const request = createRequestObject({
