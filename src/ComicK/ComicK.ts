@@ -30,7 +30,7 @@ import {
 import { CKLanguages } from "./ComicKHelper";
 
 const BASE_URL = "https://comick.io";
-const API_BASE_URL = "https://api.comick.io/v1.0";
+const API_BASE_URL = "https://api.comick.io";
 
 export const ComicKInfo: SourceInfo = {
   name: "ComicK",
@@ -76,7 +76,7 @@ export class ComicK extends Source {
     const exclTags = query.excludedTags?.map((tag: Tag) => tag.id).join(",");
     const tags = `genres=${inclTags}&excludes=${exclTags}`;
     const req = createRequestObject({
-      url: `${API_BASE_URL}/search?tachiyomi=true&q=${q}&page=${page}&${tags}`,
+      url: `${API_BASE_URL}/v1.0/search?tachiyomi=true&q=${q}&page=${page}&${tags}`,
       method: "GET",
     });
 
