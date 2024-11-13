@@ -940,7 +940,7 @@ exports.parseChapters = parseChapters;
 //       });
 //     });
 const parseSearchItems = (data) => {
-    console.log("Received data:", data);
+    console.error("Received data:", data);
     if (!data) {
         console.error("No data provided to parseSearchItems");
         return [];
