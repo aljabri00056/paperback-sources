@@ -89,21 +89,69 @@ export const parseChapters =
         });
       });
 
-export const parseSearchItems = (data: string): MangaTile[] =>
-  JSON.parse(data)
-    .map((item: CKSearchResult): MangaTile => {
-      let image = "https://comick.io/static/failed_to_load.png";
+// export const parseSearchItems = (data: string): MangaTile[] =>
+//   JSON.parse(data)
+//     .map((item: CKSearchResult): MangaTile => {
+//       let image = "https://comick.io/static/failed_to_load.png";
 
-      if (item.cover_url) {
-        image = item.cover_url;
-      } else if (item.md_covers && item.md_covers[0]) {
-        image = item.md_covers[0].gpurl;
-      }
+//       if (item.cover_url) {
+//         image = item.cover_url;
+//       } else if (item.md_covers && item.md_covers[0]) {
+//         image = item.md_covers[0].gpurl;
+//       }
 
+//       return createMangaTile({
+//         id: item.slug,
+//         image,
+//         title: createIconText({ text: item.title }),
+//       });
+//     });
+
+export const parseSearchItems = (data: string): MangaTile[] => {
+  console.log("Received data:", data);
+
+  if (!data) {
+    console.error("No data provided to parseSearchItems");
+    return [];
+  }
+
+  let parsedData;
+  try {
+    parsedData = JSON.parse(data);
+  } catch (e) {
+    console.error("Error parsing JSON:", e);
+    return [];
+  }
+
+  console.log("Parsed data:", parsedData);
+
+  if (!Array.isArray(parsedData)) {
+    console.error("Parsed data is not an array:", parsedData);
+    return [];
+  }
+
+  return parsedData.map((item: CKSearchResult): MangaTile => {
+    if (!item) {
+      console.error("Item is undefined or null:", item);
       return createMangaTile({
-        id: item.slug,
-        image,
-        title: createIconText({ text: item.title }),
+        id: "unknown",
+        image: "https://comick.io/static/failed_to_load.png",
+        title: createIconText({ text: "Unknown" }),
       });
-    });
+    }
 
+    let image = "https://comick.io/static/failed_to_load.png";
+
+    if (item.cover_url) {
+      image = item.cover_url;
+    } else if (item.md_covers && item.md_covers[0]) {
+      image = item.md_covers[0].gpurl;
+    }
+
+    return createMangaTile({
+      id: item.slug,
+      image,
+      title: createIconText({ text: item.title }),
+    });
+  });
+};
