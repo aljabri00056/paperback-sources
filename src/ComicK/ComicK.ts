@@ -30,7 +30,7 @@ import {
 import { CKLanguages } from "./ComicKHelper";
 
 const BASE_URL = "https://comick.io";
-const API_BASE_URL = "https://api.comick.io";
+const API_BASE_URL = "https://api.comick.io/v1.0";
 
 export const ComicKInfo: SourceInfo = {
   name: "ComicK",
