@@ -377,7 +377,7 @@ const ComicKSettings_1 = require("./ComicKSettings");
 const ComicKParser_1 = require("./ComicKParser");
 const ComicKHelper_1 = require("./ComicKHelper");
 const BASE_URL = "https://comick.io";
-const API_BASE_URL = "https://api.comick.io";
+const API_BASE_URL = "https://api.comick.fun";
 exports.ComicKInfo = {
     name: "ComicK",
     icon: "icon.png",
