@@ -879,11 +879,11 @@ const parseMangaDetails = (mangaId, data) => {
     const author = res.authors.map((item) => item.name).join();
     const relatedIds = c.relate_from
         .map((item) => item.relate_to.slug);
-    const genres = res.genres
-        .map((item) => createTag({
-        label: item.name,
-        id: item.slug,
-    }));
+    // const genres = res.genres
+    //   .map((item: CKGenre) => createTag({
+    //     label: item.name,
+    //     id: item.slug,
+    //   }));
     return createManga({
         id: mangaId,
         titles: [c.title],
@@ -896,13 +896,13 @@ const parseMangaDetails = (mangaId, data) => {
         status: c.status,
         follows: c.user_follow_count,
         hentai: c.hentai,
-        tags: [
-            createTagSection({
-                id: "genres",
-                label: "Genres",
-                tags: genres,
-            }),
-        ],
+        // tags: [
+        //   createTagSection({
+        //     id: "genres",
+        //     label: "Genres",
+        //     tags: genres,
+        //   }),
+        // ],
     });
 };
 exports.parseMangaDetails = parseMangaDetails;
