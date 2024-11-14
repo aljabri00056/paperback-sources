@@ -40,11 +40,11 @@ export const parseMangaDetails = (mangaId: string, data: string): Manga => {
   const relatedIds = c.relate_from
     .map((item: CKRelated) => item.relate_to.slug);
 
-  const genres = res.genres
-    .map((item: CKGenre) => createTag({
-      label: item.name,
-      id: item.slug,
-    }));
+  // const genres = res.genres
+  //   .map((item: CKGenre) => createTag({
+  //     label: item.name,
+  //     id: item.slug,
+  //   }));
 
   return createManga({
     id: mangaId,
@@ -58,13 +58,13 @@ export const parseMangaDetails = (mangaId: string, data: string): Manga => {
     status: c.status,
     follows: c.user_follow_count,
     hentai: c.hentai,
-    tags: [
-      createTagSection({
-        id: "genres",
-        label: "Genres",
-        tags: genres,
-      }),
-    ],
+    // tags: [
+    //   createTagSection({
+    //     id: "genres",
+    //     label: "Genres",
+    //     tags: genres,
+    //   }),
+    // ],
   });
 };
 
