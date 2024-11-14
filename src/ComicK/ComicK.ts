@@ -204,7 +204,7 @@ export class ComicK extends Source {
       cb(section);
 
       const req = createRequestObject({
-        url: `${API_BASE_URL}/search?tachiyomi=true&sort=${section.id}&page=1`,
+        url: `${API_BASE_URL}/v1.0/search?tachiyomi=true&sort=${section.id}&page=1`,
         method: "GET",
       });
 
