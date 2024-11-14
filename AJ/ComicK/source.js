@@ -537,7 +537,7 @@ class ComicK extends paperback_extensions_common_1.Source {
             for (const section of sections) {
                 cb(section);
                 const req = createRequestObject({
-                    url: `${API_BASE_URL}/search?tachiyomi=true&sort=${section.id}&page=1`,
+                    url: `${API_BASE_URL}/v1.0/search?tachiyomi=true&sort=${section.id}&page=1`,
                     method: "GET",
                 });
                 promises.push(this.requestManager
