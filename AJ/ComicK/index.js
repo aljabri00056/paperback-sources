@@ -885,7 +885,7 @@ const parseMangaDetails = (mangaId, data) => {
     //     id: item.slug,
     //   }));
     return createManga({
-        id: mangaId,
+        id: c.hid,
         titles: [c.title],
         author,
         artist,
