@@ -377,7 +377,7 @@ const ComicKSettings_1 = require("./ComicKSettings");
 const ComicKParser_1 = require("./ComicKParser");
 const ComicKHelper_1 = require("./ComicKHelper");
 const BASE_URL = "https://comick.io";
-const API_BASE_URL = "https://api.comick.io";
+const API_BASE_URL = "https://api.comick.fun";
 exports.ComicKInfo = {
     name: "ComicK",
     icon: "icon.png",
@@ -456,7 +456,7 @@ class ComicK extends paperback_extensions_common_1.Source {
                 const reqs = [...Array(pages).keys()]
                     .map((page) => __awaiter(this, void 0, void 0, function* () {
                     const req = createRequestObject({
-                        url: `${API_BASE_URL}/comic/${_res.id}/chapters?tachiyomi=true&page=${page + 1}`,
+                        url: `${API_BASE_URL}/comic/${_res.id}/chapter?tachiyomi=true&page=${page + 1}`,
                         method: "GET",
                     });
                     const res = yield this.requestManager.schedule(req, 2);
