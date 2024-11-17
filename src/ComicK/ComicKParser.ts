@@ -47,7 +47,7 @@ export const parseMangaDetails = (mangaId: string, data: string): Manga => {
   //   }));
 
   return createManga({
-    id: mangaId,
+    id: c.hid,
     titles: [ c.title ],
     author,
     artist,
