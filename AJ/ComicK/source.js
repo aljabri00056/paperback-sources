@@ -934,7 +934,7 @@ const parseSearchItems = (data) => JSON.parse(data)
         image = item.md_covers[0].gpurl;
     }
     return createMangaTile({
-        id: item.slug,
+        id: item.hid,
         image,
         title: createIconText({ text: item.title }),
     });
