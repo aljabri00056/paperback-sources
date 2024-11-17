@@ -30,7 +30,7 @@ import {
 import { CKLanguages } from "./ComicKHelper";
 
 const BASE_URL = "https://comick.io";
-const API_BASE_URL = "https://api.comick.io";
+const API_BASE_URL = "https://api.comick.fun";
 
 export const ComicKInfo: SourceInfo = {
   name: "ComicK",
@@ -113,7 +113,7 @@ export class ComicK extends Source {
       const reqs = [...Array(pages).keys()]
         .map(async (page) => {
           const req = createRequestObject({
-            url: `${API_BASE_URL}/comic/${_res.id}/chapters?tachiyomi=true&page=${page + 1}`,
+            url: `${API_BASE_URL}/comic/${_res.id}/chapter?tachiyomi=true&page=${page + 1}`,
             method: "GET",
           });
 
