@@ -99,7 +99,7 @@ export class ComicK extends Source {
     const _res = JSON.parse(_data.data).comic;
 
     const req = createRequestObject({
-      url: `${API_BASE_URL}/comic/${_res.id}/chapters?tachiyomi=true`,
+      url: `${API_BASE_URL}/comic/${_res.hid}/chapters?tachiyomi=true`,
       method: "GET",
     });
     const res = await this.requestManager.schedule(req, 2);
