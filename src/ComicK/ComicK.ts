@@ -113,7 +113,7 @@ export class ComicK extends Source {
       const reqs = [...Array(pages).keys()]
         .map(async (page) => {
           const req = createRequestObject({
-            url: `${API_BASE_URL}/comic/${_res.id}/chapter?tachiyomi=true&page=${page + 1}`,
+            url: `${API_BASE_URL}/comic/${_res.hid}/chapter?tachiyomi=true&page=${page + 1}`,
             method: "GET",
           });
 
