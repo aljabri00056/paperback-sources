@@ -895,7 +895,7 @@ const parseMangaDetails = (mangaId, data) => {
         rating: c.bayesian_rating,
         status: c.status,
         follows: c.user_follow_count,
-        hentai: c.hentai,
+        // hentai: c.hentai,
         // tags: [
         //   createTagSection({
         //     id: "genres",
