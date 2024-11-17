@@ -101,7 +101,7 @@ export const parseSearchItems = (data: string): MangaTile[] =>
       }
 
       return createMangaTile({
-        id: item.slug,
+        id: item.hid,
         image,
         title: createIconText({ text: item.title }),
       });
