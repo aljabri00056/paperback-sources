@@ -444,7 +444,7 @@ class ComicK extends paperback_extensions_common_1.Source {
             const _data = yield this.requestManager.schedule(_req, 2);
             const _res = JSON.parse(_data.data).comic;
             const req = createRequestObject({
-                url: `${API_BASE_URL}/comic/${_res.id}/chapter?tachiyomi=true`,
+                url: `${API_BASE_URL}/comic/${_res.id}/chapters?tachiyomi=true`,
                 method: "GET",
             });
             const res = yield this.requestManager.schedule(req, 2);
@@ -456,7 +456,7 @@ class ComicK extends paperback_extensions_common_1.Source {
                 const reqs = [...Array(pages).keys()]
                     .map((page) => __awaiter(this, void 0, void 0, function* () {
                     const req = createRequestObject({
-                        url: `${API_BASE_URL}/comic/${_res.id}/chapter?tachiyomi=true&page=${page + 1}`,
+                        url: `${API_BASE_URL}/comic/${_res.id}/chapters?tachiyomi=true&page=${page + 1}`,
                         method: "GET",
                     });
                     const res = yield this.requestManager.schedule(req, 2);
